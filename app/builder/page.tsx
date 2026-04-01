@@ -20,14 +20,45 @@ export default function BuilderPage() {
   const [customOpen, setCustomOpen] = useState(false);
   const [customText, setCustomText] = useState("");
   const [generated, setGenerated] = useState(false);
+  
+  // New states for Gemini Integration
+  const [aiAdvice, setAiAdvice] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // Mock generated outfit pieces (everything except the anchor)
   const generatedPieces = anchor
     ? mockClosetItems.filter((i) => i.id !== anchor.id).slice(0, 2)
     : [];
 
-  function handleGenerate() {
-    if (anchor || customText.trim()) setGenerated(true);
+  async function handleGenerate() {
+    const anchorName = anchor ? anchor.name : customText;
+    if (!anchorName) return;
+
+    setLoading(true);
+    setGenerated(false); 
+
+    // Build the prompt for Gemini
+    const prompt = `I want to build an outfit around this anchor piece: "${anchorName}". 
+      The occasion is ${occasion}. 
+      Please suggest a complete outfit including a top, bottom, shoes, and one accessory. 
+      Explain briefly why these work together.`;
+
+    try {
+      const response = await fetch('/api/stylist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
+      });
+      
+      const data = await response.json();
+      setAiAdvice(data.text);
+      setGenerated(true);
+    } catch (error) {
+      console.error("Stylist Error:", error);
+      alert("The stylist is currently unavailable.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   function handleReset() {
@@ -35,6 +66,7 @@ export default function BuilderPage() {
     setCustomText("");
     setGenerated(false);
     setCustomOpen(false);
+    setAiAdvice("");
   }
 
   return (
@@ -119,10 +151,10 @@ export default function BuilderPage() {
 
           <button
             onClick={handleGenerate}
-            disabled={!anchor && !customText.trim()}
+            disabled={loading || (!anchor && !customText.trim())}
             className="mt-5 w-full py-2.5 rounded-lg text-[13px] font-medium bg-forme-ink text-forme-card disabled:opacity-30 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
           >
-            Build outfit
+            {loading ? "Consulting Gemini..." : "Build outfit"}
           </button>
         </div>
 
@@ -133,17 +165,22 @@ export default function BuilderPage() {
             <AiBadge label="AI-generated" />
           </div>
 
-          {/* Outfit preview */}
-          <div className="aspect-[2/3] bg-forme-secondary rounded-lg flex flex-col items-center justify-center gap-1.5 relative mb-4">
-            {generated ? (
-              <>
-                <div className="w-16 h-[84px] bg-black/[0.12] rounded" />
-                <div className="w-16 h-[72px] bg-black/[0.08] rounded" />
-                <div className="w-14 h-8 bg-black/[0.12] rounded" />
+          {/* Outfit preview / Gemini Response Area */}
+          <div className="aspect-[2/3] bg-forme-secondary rounded-lg flex flex-col items-center justify-center gap-1.5 relative mb-4 p-5 overflow-y-auto">
+            {loading ? (
+              <div className="flex flex-col items-center gap-2">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-forme-ink"></div>
+                <p className="text-[12px] text-forme-subtle">Stylist is thinking...</p>
+              </div>
+            ) : generated ? (
+              <div className="h-full w-full">
+                <p className="text-[13px] text-forme-ink leading-relaxed whitespace-pre-wrap">
+                  {aiAdvice}
+                </p>
                 <span className="absolute bottom-3 right-3 px-2 py-1 bg-forme-card border-forme rounded-pill text-[10px] text-forme-muted">
                   Built around: {anchor?.name ?? "Custom piece"}
                 </span>
-              </>
+              </div>
             ) : (
               <p className="text-[13px] text-forme-subtle text-center px-6">
                 {anchor || customText.trim()
