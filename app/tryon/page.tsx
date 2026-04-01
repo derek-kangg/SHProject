@@ -68,7 +68,7 @@ export default function TryOnPage() {
                   type="text"
                   value={height}
                   onChange={(e) => setHeight(e.target.value)}
-                  placeholder="5'10""
+                  placeholder="5'10&quot;"
                   className="border-forme rounded-lg px-3 py-2 text-[13px] bg-forme-card text-forme-ink placeholder:text-forme-subtle outline-none focus:border-forme-strong transition-colors"
                 />
               </div>

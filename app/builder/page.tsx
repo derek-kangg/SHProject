@@ -147,7 +147,7 @@ export default function BuilderPage() {
             ) : (
               <p className="text-[13px] text-forme-subtle text-center px-6">
                 {anchor || customText.trim()
-                  ? "Click "Build outfit" to generate"
+                  ? 'Click "Build outfit" to generate'
                   : "Select an anchor piece to get started"}
               </p>
             )}

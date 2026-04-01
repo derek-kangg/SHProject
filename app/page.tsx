@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
-import Pill from '@/components/ui/Pill'
-import OutfitCard from '@/components/ui/OutfitCard'
-import { mockTodayOutfits } from '@/lib/mockData'
-import type { Occasion } from '@/lib/types'
+import { useState } from "react";
+import Pill from "@/components/ui/Pill";
+import OutfitCard from "@/components/features/OutfitCard";
+import { mockDailyOutfits, mockUser } from "@/lib/mock-data";
+import type { Occasion } from "@/types";
 
 const OCCASION_FILTERS: { value: Occasion | 'all'; label: string }[] = [
   { value: 'all',          label: 'All' },
@@ -23,8 +23,8 @@ export default function TodayPage() {
   const [filter, setFilter] = useState<Occasion | 'all'>('all')
 
   const outfits = filter === 'all'
-    ? mockTodayOutfits
-    : mockTodayOutfits.filter(o => o.occasion === filter)
+    ? mockDailyOutfits
+    : mockDailyOutfits.filter(o => o.occasion === filter)
 
   // Format today's date
   const today = new Date().toLocaleDateString('en-US', {
