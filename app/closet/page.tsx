@@ -4,7 +4,7 @@ import { useState } from "react";
 import Pill from "@/components/ui/Pill";
 import ClosetItem from "@/components/features/ClosetItem";
 import AddItemModal from "@/components/features/AddItemModal";
-import { mockClosetItems } from "@/lib/mock-data";
+import { useCloset } from "@/lib/closet-context";
 import type { ClothingCategory, ClothingItem } from "@/types";
 
 const CATEGORIES: { label: string; value: ClothingCategory | "all" }[] = [
@@ -24,16 +24,11 @@ const SORT_OPTIONS = [
 ];
 
 export default function ClosetPage() {
-  const [items, setItems] = useState<ClothingItem[]>([]);
+  const { items, addItem } = useCloset();
   const [activeCategory, setActiveCategory] = useState<ClothingCategory | "all">("all");
-  const [activeSort, setActiveSort] = useState("worn");
-  const [selected, setSelected] = useState<string | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
-
-  function handleAddItem(newItem: Omit<ClothingItem, "id">) {
-    const item: ClothingItem = { ...newItem, id: `c${Date.now()}` };
-    setItems((prev) => [item, ...prev]);
-  }
+  const [activeSort,     setActiveSort]     = useState("recent");
+  const [selected,       setSelected]       = useState<string | null>(null);
+  const [modalOpen,      setModalOpen]      = useState(false);
 
   const filtered =
     activeCategory === "all"
@@ -88,7 +83,7 @@ export default function ClosetPage() {
         </div>
       ) : (
         <div className="py-20 text-center">
-          <p className="text-[14px] text-[#726D68] mb-1">No items in this category</p>
+          <p className="text-[14px] text-[#726D68] mb-1">Your closet is empty</p>
           <p className="text-[13px] text-[#A8A39E]">
             Click &ldquo;+ Add item&rdquo; to start building your closet.
           </p>
@@ -112,7 +107,7 @@ export default function ClosetPage() {
       <AddItemModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        onAdd={handleAddItem}
+        onAdd={addItem}
       />
     </div>
   );
