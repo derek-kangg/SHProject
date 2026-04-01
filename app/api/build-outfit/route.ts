@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "GEMINI_API_KEY not configured" }, { status: 500 });
   }
 
-  const { anchorItem, customAnchor, closetItems, occasion } = await req.json();
+  const { anchorItem, customAnchor, closetItems, occasion, gender} = await req.json();
 
   const anchorDescription = anchorItem
     ? `${anchorItem.name}${anchorItem.color ? ` in ${anchorItem.color}` : ""}${anchorItem.brand ? ` by ${anchorItem.brand}` : ""} (category: ${anchorItem.category})`
@@ -34,6 +34,8 @@ export async function POST(req: NextRequest) {
 
   const prompt = `You are an expert personal stylist. A user wants to build an outfit around their anchor piece.
 
+Build a complete outfit for a ${gender === 'all' ? 'unisex/neutral' : gender} style.
+
 ANCHOR PIECE: ${anchorDescription}
 OCCASION: ${occasion ?? "casual"}
 
@@ -45,6 +47,11 @@ Your task:
 2. Suggest 1-2 additional items they could buy to complete or elevate the look (these are NOT in their closet).
 3. Provide 3 concise, specific styling tips for wearing this outfit.
 4. Write a short outfit description (1-2 sentences).
+
+CONSTRAINTS:
+  - If the gender is 'women', suggest feminine-leaning cuts and styles (e.g., tailored trousers, skirts, or specific women's footwear).
+  - If the gender is 'men', suggest masculine-leaning cuts.
+  - Be specific about the fit and fabric.
 
 Respond ONLY with valid JSON in this exact format:
 {

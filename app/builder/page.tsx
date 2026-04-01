@@ -5,7 +5,7 @@ import Pill from "@/components/ui/Pill";
 import AiBadge from "@/components/ui/AiBadge";
 import ClosetItem from "@/components/features/ClosetItem";
 import { useCloset } from "@/lib/closet-context";
-import type { ClothingItem, Occasion } from "@/types";
+import type { ClothingItem, Occasion, Gender } from "@/types";
 import type { BuildOutfitResponse, SuggestedItem } from "@/app/api/build-outfit/route";
 
 const OCCASIONS: { label: string; value: Occasion }[] = [
@@ -17,6 +17,12 @@ const OCCASIONS: { label: string; value: Occasion }[] = [
   { label: "Gym",          value: "gym"          },
 ];
 
+const GENDERS: { label: string; value: Gender }[] = [
+  { label: "All",   value: "all" },
+  { label: "Men",   value: "men" },
+  { label: "Women", value: "women" },
+];
+
 export default function BuilderPage() {
   const { items: closetItems } = useCloset();
   const [anchor,     setAnchor]     = useState<ClothingItem | null>(null);
@@ -26,6 +32,7 @@ export default function BuilderPage() {
   const [loading,    setLoading]    = useState(false);
   const [error,      setError]      = useState("");
   const [result,     setResult]     = useState<BuildOutfitResponse | null>(null);
+  const [gender, setGender] = useState<Gender>("all");
 
   const selectedClosetItems = result
     ? closetItems.filter((i) => result.closetItemIds.includes(i.id))
@@ -46,6 +53,7 @@ export default function BuilderPage() {
           customAnchor: customText.trim() || null,
           closetItems,
           occasion,
+          gender,
         }),
       });
 
@@ -156,6 +164,20 @@ export default function BuilderPage() {
             ))}
           </div>
 
+          <p className="text-[11px] tracking-[0.08em] uppercase font-medium text-[#A8A39E] mb-2">
+  3 · Style Preference
+</p>
+<div className="flex gap-1.5 flex-wrap mb-5">
+  {GENDERS.map(({ label, value }) => (
+    <Pill
+      key={value}
+      active={gender === value}
+      onClick={() => { setGender(value); setResult(null); }}
+    >
+      {label}
+    </Pill>
+  ))}
+</div>
           <button
             onClick={handleBuild}
             disabled={loading || (!anchor && !customText.trim())}
