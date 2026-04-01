@@ -34,37 +34,52 @@ const BUDGET_PRESETS = [
 
 function ProductCard({ product }: { product: ShopProduct }) {
   function handleClick() {
-    if (product.link) window.open(product.link, "_blank");
+    // Check if the link exists before trying to open it
+    if (product.link) {
+      window.open(product.link, "_blank", "noopener,noreferrer");
+    } else {
+      console.error("No link available for this product:", product.title);
+    }
   }
+
   return (
     <div
       onClick={handleClick}
-      className="bg-white border border-black/[0.08] rounded-xl overflow-hidden hover:border-black/[0.2] transition-colors group cursor-pointer"
+      className="bg-white border border-black/[0.08] rounded-xl overflow-hidden hover:border-black/[0.2] hover:shadow-md transition-all group cursor-pointer active:scale-[0.98]"
     >
       <div
-        className="bg-[#F0EDE8] overflow-hidden flex items-center justify-center"
-        style={{aspectRatio:"3/4"}}
+        className="bg-[#F0EDE8] overflow-hidden flex items-center justify-center relative"
+        style={{ aspectRatio: "3/4" }}
       >
         {product.imageUrl ? (
           <img
             src={product.imageUrl}
             alt={product.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
           <span className="text-[11px] text-[#A8A39E]">No image</span>
         )}
+        
+        {/* Visual cue for clickability */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center">
+           <span className="bg-white/90 px-3 py-1.5 rounded-full text-[11px] font-medium opacity-0 group-hover:opacity-100 transition-opacity shadow-sm">
+             Shop Now ↗
+           </span>
+        </div>
       </div>
       <div className="p-3">
-        <p className="text-[13px] text-[#111110] leading-tight line-clamp-2 mb-1.5">
+        <p className="text-[13px] text-[#111110] leading-tight line-clamp-2 mb-2 font-medium">
           {product.title}
         </p>
         <div className="flex items-center justify-between">
-          {product.price  && (
-            <span className="text-[12px] font-medium text-[#111110]">{product.price}</span>
+          {product.price && (
+            <span className="text-[12px] font-bold text-[#111110]">{product.price}</span>
           )}
           {product.source && (
-            <span className="text-[11px] text-[#A8A39E] truncate ml-2">{product.source}</span>
+            <span className="text-[11px] text-[#A8A39E] truncate ml-2 max-w-[100px]">
+              {product.source}
+            </span>
           )}
         </div>
       </div>

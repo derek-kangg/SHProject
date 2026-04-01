@@ -77,7 +77,7 @@ export async function GET(req: NextRequest) {
           priceRaw,
           imageUrl: item.thumbnail ?? undefined,
           source:   item.source    ?? undefined,
-          link:     item.link      ?? undefined,
+          link:     item.link      || (item as any).product_link || undefined,
         };
       })
       // Light client-side cleanup — remove obvious outliers
