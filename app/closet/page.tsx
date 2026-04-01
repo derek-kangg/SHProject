@@ -24,7 +24,7 @@ const SORT_OPTIONS = [
 ];
 
 export default function ClosetPage() {
-  const [items, setItems] = useState<ClothingItem[]>(mockClosetItems);
+  const [items, setItems] = useState<ClothingItem[]>([]);
   const [activeCategory, setActiveCategory] = useState<ClothingCategory | "all">("all");
   const [activeSort, setActiveSort] = useState("worn");
   const [selected, setSelected] = useState<string | null>(null);
