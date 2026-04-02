@@ -3,7 +3,7 @@
 > Dress with confidence. FORME is an AI-powered personal styling platform that knows your wardrobe inside out — generating outfits for today's weather, building looks around your favourite pieces, and helping you shop smarter.
 
 ---
-![Screenshot 2026-04-01](174210.png)
+
 ## Features
 
 ### Today
